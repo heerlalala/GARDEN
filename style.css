@@ -330,7 +330,6 @@ body {
   border-radius: 36px;
   box-shadow: var(--shadow-medium);
   overflow: hidden;
-  background: linear-gradient(180deg, var(--color-sky-top) 0%, var(--color-sky-bot) 100%);
   display: none;
   flex-direction: column;
   justify-content: flex-end;
@@ -339,6 +338,13 @@ body {
 #garden-view.active {
   display: flex;
 }
+.garden-stage {
+  position: relative;
+  width: 100%;
+  flex-grow: 1;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--color-sky-top) 0%, var(--color-sky-bot) 100%);
+}
 
 /* --- Sky & Ambient Layers --- */
 .sky-background {
@@ -346,7 +352,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 45%;
+  height: 50%;
   pointer-events: none;
   z-index: 1;
 }
@@ -376,7 +382,7 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60%;
+  height: 75%;
   background: radial-gradient(ellipse at 50% 0%, var(--color-grass-light) 40%, var(--color-grass-dark) 100%);
   z-index: 2;
   border-top-left-radius: 60% 15%;
