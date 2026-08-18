@@ -11,7 +11,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css?v=1.5">
+  <script>
+    window.addEventListener('error', function(e) {
+      const banner = document.createElement('div');
+      banner.style.position = 'fixed';
+      banner.style.top = '0';
+      banner.style.left = '0';
+      banner.style.width = '100%';
+      banner.style.backgroundColor = '#C93D4B';
+      banner.style.color = '#FFFDF6';
+      banner.style.padding = '12px';
+      banner.style.zIndex = '999999';
+      banner.style.fontFamily = 'monospace';
+      banner.style.fontSize = '13px';
+      banner.style.borderBottom = '3px solid #3E3E3E';
+      banner.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)';
+      banner.innerText = "Error: " + e.message + " at " + (e.filename ? e.filename.split('/').pop() : 'unknown') + ":" + e.lineno;
+      document.body.appendChild(banner);
+    });
+  </script>
+  <link rel="stylesheet" href="style.css?v=1.6">
 </head>
 <body>
 
@@ -553,6 +572,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=1.5"></script>
+  <script src="app.js?v=1.6"></script>
 </body>
 </html>
