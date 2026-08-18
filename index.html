@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Little Garden From Heer 🌷</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌷</text></svg>">
+  
+  <!-- Google Fonts for Ghibli aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Audio Toggle / Custom Audio Feedback -->
+  <div class="audio-control" id="audio-toggle" title="Toggle Sound Cues">
+    <span class="sound-on">🔊</span>
+    <span class="sound-off">🔇</span>
+  </div>
+
+  <!-- Background overlay particles (flying petals) -->
+  <div id="petal-container" class="petal-container"></div>
+
+  <!-- VIEW 1: INTRO / GENDER SELECTION -->
+  <section id="intro-view" class="view active">
+    <div class="intro-card paper-texture">
+      <div class="intro-flower-icon">🌷</div>
+      <h1 class="serif-title">A Little Garden From Heer</h1>
+      
+      <div class="intro-dialogue" id="intro-step-1">
+        <p class="dialogue-text font-handwritten">“Heer made this little garden for you...”</p>
+        <button class="btn btn-primary" id="btn-next-intro">Continue 🌸</button>
+      </div>
+
+      <div class="intro-dialogue hidden" id="intro-step-2">
+        <p class="dialogue-text">Before we begin… tell me who I'm talking to.</p>
+        <div class="gender-selection">
+          <button class="gender-card boy" id="gender-boy">
+            <span class="gender-emoji">👦</span>
+            <span class="gender-label">I’m a boy</span>
+          </button>
+          <button class="gender-card girl" id="gender-girl">
+            <span class="gender-emoji">👧</span>
+            <span class="gender-label">I’m a girl</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="intro-dialogue hidden" id="intro-step-3">
+        <div class="personalized-note" id="note-boy">
+          <p class="font-handwritten">“Ohhh, a boy. Got it.”</p>
+          <p>Heer made this garden especially for you.</p>
+          <p class="font-handwritten note-warning">“And yes… she expects you to make something pretty. Don't mess this up. 🌷”</p>
+        </div>
+        <div class="personalized-note hidden" id="note-girl">
+          <p class="font-handwritten">“A girl! Perfect.”</p>
+          <p>Heer made this garden especially for you.</p>
+          <p class="font-handwritten note-warning">“And apparently you have been trusted with an extremely important mission. 🌸”</p>
+        </div>
+        
+        <div class="from-heer-envelope">
+          <div class="envelope-seal">💌</div>
+          <p class="envelope-text">This is from Heer &rarr; YOU</p>
+        </div>
+        
+        <button class="btn btn-primary" id="btn-start-game">ENTER THE GARDEN 🌷</button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- VIEW 2: THE GARDEN CANVAS -->
+  <section id="garden-view" class="view">
+    <!-- Sky & clouds background -->
+    <div class="sky-background">
+      <div class="sun-glow"></div>
+      <div class="cloud cloud-1">☁️</div>
+      <div class="cloud cloud-2">☁️</div>
+      <div class="cloud cloud-3">☁️</div>
+    </div>
+
+    <!-- The Garden Environment -->
+    <div class="garden-container">
+      
+      <!-- Trees swaying in background -->
+      <div class="garden-element tree tree-left">
+        <svg viewBox="0 0 120 180" width="100%" height="100%">
+          <path d="M60,180 L60,140" stroke="#7A5C3D" stroke-width="8" stroke-linecap="round"/>
+          <path d="M60,140 Q40,120 45,90 Q30,70 60,30 Q90,70 75,90 Q80,120 60,140 Z" fill="#6EA664"/>
+          <circle cx="50" cy="80" r="30" fill="#7EB873" opacity="0.9"/>
+          <circle cx="70" cy="70" r="25" fill="#8ECA83" opacity="0.8"/>
+          <circle cx="60" cy="50" r="28" fill="#5F9755" opacity="0.95"/>
+        </svg>
+      </div>
+      <div class="garden-element tree tree-right">
+        <svg viewBox="0 0 100 160" width="100%" height="100%">
+          <path d="M50,160 L50,120" stroke="#7A5C3D" stroke-width="6" stroke-linecap="round"/>
+          <path d="M50,120 Q30,100 35,75 Q20,55 50,20 Q80,55 65,75 Q70,100 50,120 Z" fill="#5F9755"/>
+          <circle cx="45" cy="70" r="25" fill="#6EA664" opacity="0.9"/>
+          <circle cx="60" cy="65" r="20" fill="#7EB873" opacity="0.8"/>
+        </svg>
+      </div>
+
+      <!-- Winding Garden Pathway -->
+      <div class="garden-path">
+        <svg viewBox="0 0 800 400" width="100%" height="100%" preserveAspectRatio="none">
+          <path d="M 0,380 Q 200,320 300,260 T 600,220 T 800,180 L 800,240 Q 600,280 400,320 T 0,400 Z" fill="#E8D1B3" opacity="0.75"/>
+          <!-- Little pebbles along the path -->
+          <circle cx="100" cy="360" r="6" fill="#D2B48C" opacity="0.8"/>
+          <circle cx="250" cy="310" r="8" fill="#C5A072" opacity="0.8"/>
+          <circle cx="450" cy="270" r="5" fill="#D2B48C" opacity="0.8"/>
+          <circle cx="550" cy="235" r="7" fill="#C5A072" opacity="0.8"/>
+          <circle cx="700" cy="205" r="6" fill="#D2B48C" opacity="0.8"/>
+        </svg>
+      </div>
+
+      <!-- Small Pond -->
+      <div class="garden-element pond">
+        <svg viewBox="0 0 200 120" width="100%" height="100%">
+          <ellipse cx="100" cy="60" rx="90" ry="50" fill="#A9D3E6"/>
+          <ellipse cx="100" cy="60" rx="80" ry="43" fill="#BCE3F5"/>
+          <!-- Ripples -->
+          <ellipse class="pond-ripple ripple-1" cx="80" cy="55" rx="20" ry="10" fill="none" stroke="#FFFFFF" stroke-width="1" opacity="0.7"/>
+          <ellipse class="pond-ripple ripple-2" cx="130" cy="70" rx="30" ry="15" fill="none" stroke="#FFFFFF" stroke-width="1" opacity="0.5"/>
+          <!-- Lily pad -->
+          <path d="M40,55 Q50,45 60,55 Q70,65 55,75 Q40,65 40,55 Z" fill="#5E9355" transform="rotate(-15, 50, 60)"/>
+          <circle cx="48" cy="55" r="3" fill="#FFC0CB"/> <!-- Little pink lotus bud -->
+        </svg>
+      </div>
+
+      <!-- Picnic Setup Blanket & Cushions -->
+      <div class="garden-element picnic-blanket">
+        <!-- Cozy Picnic Blanket -->
+        <div class="picnic-cloth"></div>
+        <div class="picnic-cushion cushion-pink"></div>
+        <div class="picnic-cushion cushion-blue"></div>
+        
+        <!-- Fruits, Book, Polaroids lying around -->
+        <div class="picnic-items">
+          <span class="picnic-item book" title="A tiny poetry book by Heer">📖</span>
+          <span class="picnic-item tea" title="Warm chamomile tea">🍵</span>
+          <span class="picnic-item apple" title="Sweet apples">🍎</span>
+          
+          <!-- Polaroid Photo Asset -->
+          <div class="polaroid-photo" id="polaroid-trigger" title="Look at this photograph 📸">
+            <div class="polaroid-img-wrapper">
+              <img src="assets/images/picnic_scene.jpg" alt="Cozy Picnic Illustration">
+            </div>
+            <div class="polaroid-caption font-handwritten">Us 🤍</div>
+          </div>
+        </div>
+
+        <!-- The Interactive Picnic Basket -->
+        <div class="picnic-basket-wrapper" id="basket-trigger" title="Open Heer's Picnic Basket">
+          <div class="basket-lid"></div>
+          <div class="basket-body">🧺</div>
+          <div class="basket-sparkle">✨</div>
+        </div>
+      </div>
+
+      <!-- Wooden Garden Signposts -->
+      <div class="garden-signpost sign-left" id="signpost-1" title="Click to read sign!">
+        <div class="sign-board font-handwritten">
+          Heer's Garden 🌷<br>Please don't destroy everything.
+        </div>
+        <div class="sign-post"></div>
+      </div>
+      
+      <div class="garden-signpost sign-right" id="signpost-2" title="Click to read sign!">
+        <div class="sign-board font-handwritten">
+          Heer says:<br>Pick wisely.
+        </div>
+        <div class="sign-post"></div>
+      </div>
+
+      <!-- Butterflies flying around -->
+      <div class="butterfly" id="butterfly-1">🦋</div>
+      <div class="butterfly" id="butterfly-2">🦋</div>
+      <div class="bee" id="bee-1">🐝</div>
+
+      <!-- Fireflies glowing in background -->
+      <div class="firefly firefly-1"></div>
+      <div class="firefly firefly-2"></div>
+      <div class="firefly firefly-3"></div>
+      <div class="firefly firefly-4"></div>
+
+      <!-- FLOWERS FIELD (Absolute positions, scattered organically) -->
+      <div class="flower-field">
+        
+        <!-- 1. ROSE (Romantic) -->
+        <div class="garden-flower flower-rose" data-id="rose" data-trait="Romantic" style="left: 12%; top: 78%;" title="Rose 🌹">
+          <svg viewBox="0 0 50 80" class="flower-svg">
+            <path class="flower-stem" d="M25,80 Q23,50 25,25" fill="none" stroke="#4C6E43" stroke-width="3"/>
+            <path class="flower-leaf" d="M25,50 Q12,45 10,40 Q15,50 25,50 Z" fill="#5F8F54"/>
+            <!-- Rose Bloom -->
+            <g class="flower-bloom animate-wiggle">
+              <ellipse cx="25" cy="25" rx="14" ry="14" fill="#C93D4B"/>
+              <path d="M20,20 Q25,10 30,20 Q25,25 20,20 Z" fill="#E85D6C"/>
+              <path d="M15,22 Q25,18 25,32 Q15,30 15,22 Z" fill="#B22A3A"/>
+              <path d="M35,22 Q25,18 25,32 Q35,30 35,22 Z" fill="#B22A3A"/>
+              <circle cx="25" cy="22" r="5" fill="#991B29"/>
+            </g>
+          </svg>
+          <span class="picked-tag">picked!</span>
+        </div>
+
+        <!-- 2. SUNFLOWER (Sunny) -->
+        <div class="garden-flower flower-sunflower" data-id="sunflower" data-trait="Sunny" style="left: 85%; top: 62%;" title="Sunflower 🌻">
+          <svg viewBox="0 0 60 90" class="flower-svg">
+            <path class="flower-stem" d="M30,90 Q30,60 30,35" fill="none" stroke="#4C6E43" stroke-width="4"/>
+            <path class="flower-leaf" d="M30,65 Q45,60 48,55 Q40,70 30,65 Z" fill="#5F8F54"/>
+            <g class="flower-bloom animate-wiggle">
+              <!-- Petals -->
+              <path d="M30,35 L30,5 L30,35 M30,35 L40,8 L30,35 M30,35 L50,15 L30,35 M30,35 L55,25 L30,35 M30,35 L58,35 L30,35 M30,35 L55,45 L30,35 M30,35 L50,55 L30,35 M30,35 L40,62 L30,35 M30,35 L30,65 L30,35 M30,35 L20,62 L30,35 M30,35 L10,55 L30,35 M30,35 L5,45 L30,35 M30,35 L2,35 L30,35 M30,35 L5,25 L30,35 M30,35 L10,15 L30,35 M30,35 L20,8 L30,35" stroke="#F6C445" stroke-width="8" stroke-linecap="round"/>
+              <circle cx="30" cy="35" r="20" fill="#F0B52B"/>
+              <circle cx="30" cy="35" r="11" fill="#604020"/>
+              <!-- Smiling Face Core -->
+              <circle cx="26" cy="32" r="1.5" fill="#FFFFFF"/>
+              <circle cx="34" cy="32" r="1.5" fill="#FFFFFF"/>
+              <path d="M27,38 Q30,41 33,38" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+            </g>
+          </svg>
+          <span class="picked-tag">picked!</span>
+        </div>
+
+        <!-- 3. TULIP (Elegant) -->
+        <div class="garden-flower flower-tulip" data-id="tulip" data-trait="Elegant" style="left: 28%; top: 80%;" title="Tulip 🌷">
+          <svg viewBox="0 0 40 70" class="flower-svg">
+            <path class="flower-stem" d="M20,70 Q18,45 20,30" fill="none" stroke="#4C6E43" stroke-width="2.5"/>
+            <path class="flower-leaf" d="M20,55 Q5,48 5,35 Q12,50 20,55 Z" fill="#5F8F54"/>
+            <g class="flower-bloom animate-wiggle">
+              <path d="M10,30 Q20,40 30,30 Q33,10 25,12 Q20,20 20,12 Q15,12 10,30 Z" fill="#E86E95"/>
+              <path d="M14,30 Q20,38 26,30 Q28,15 20,16 Q12,15 14,30 Z" fill="#F495B4"/>
+              <path d="M19,30 Q20,34 21,30 Q22,20 20,20 Q18,20 19,30 Z" fill="#FFFFFF" opacity="0.6"/>
+            </g>
+          </svg>
+          <span class="picked-tag">picked!</span>
+        </div>
+
+        <!-- 4. DAISY (Playful) -->
+        <div class="garden-flower flower-daisy" data-id="daisy" data-trait="Playful" style="left: 75%; top: 76%;" title="Daisy 🌼">
+          <svg viewBox="0 0 50 70" class="flower-svg">
+            <path class="flower-stem" d="M25,70 Q27,45 25,30" fill="none" stroke="#4C6E43" stroke-width="2.5"/>
+            <path class="flower-leaf" d="M25,50 Q38,48 40,43 Q32,53 25,50 Z" fill="#5F8F54"/>
+            <g class="flower-bloom animate-wiggle">
+              <!-- Petals -->
+              <ellipse cx="25" cy="15" rx="4" ry="12" fill="#FFFFFF" transform="rotate(0, 25, 30)"/>
+              <ellipse cx="25" cy="15" rx="4" ry="12" fill="#FFFFFF" transform="rotate(30, 25, 30)"/>
+              <ellipse cx="25" cy="15" rx="4" ry="12" fill="#FFFFFF" transform="rotate(60, 25, 30)"/>
+              <ellipse cx="25" cy="15" rx="4" ry="12" fill="#FFFFFF" transform="rotate(90, 25, 30)"/>
+              <ellipse cx="25" cy="15" rx="4" ry="12" fill="#FFFFFF" transform="rotate(120, 25, 30)"/>
+              <ellipse cx="25" cy="15" rx="4" ry="12" fill="#FFFFFF" transform="rotate(150, 25, 30)"/>
+              <ellipse cx="25" cy="15" rx="4" ry="12" fill="#FFFFFF" transform="rotate(180, 25, 30)"/>
+              <ellipse cx="25" cy="15" rx="4" ry="12" fill="#FFFFFF" transform="rotate(210, 25, 30)"/>
+              <ellipse cx="25" cy="15" rx="4" ry="12" fill="#FFFFFF" transform="rotate(240, 25, 30)"/>
+              <ellipse cx="25" cy="15" rx="4" ry="12" fill="#FFFFFF" transform="rotate(270, 25, 30)"/>
+              <ellipse cx="25" cy="15" rx="4" ry="12" fill="#FFFFFF" transform="rotate(300, 25, 30)"/>
+              <ellipse cx="25" cy="15" rx="4" ry="12" fill="#FFFFFF" transform="rotate(330, 25, 30)"/>
+              <circle cx="25" cy="30" r="8" fill="#F1C40F"/>
+            </g>
+          </svg>
+          <span class="picked-tag">picked!</span>
+        </div>
+
+        <!-- 5. LAVENDER (Calm) -->
+        <div class="garden-flower flower-lavender" data-id="lavender" data-trait="Calm" style="left: 63%; top: 66%;" title="Lavender 🪻">
+          <svg viewBox="0 0 30 80" class="flower-svg">
+            <path class="flower-stem" d="M15,80 L15,25" fill="none" stroke="#4C6E43" stroke-width="2"/>
+            <g class="flower-bloom animate-wiggle">
+              <ellipse cx="15" cy="45" rx="5" ry="3" fill="#9B5DE5"/>
+              <ellipse cx="12" cy="40" rx="4" ry="3.5" fill="#A29BFE"/>
+              <ellipse cx="18" cy="40" rx="4" ry="3.5" fill="#818CF8"/>
+              <ellipse cx="15" cy="35" rx="5" ry="4" fill="#9B5DE5"/>
+              <ellipse cx="11" cy="30" rx="4" ry="4" fill="#A29BFE"/>
+              <ellipse cx="19" cy="30" rx="4" ry="4" fill="#818CF8"/>
+              <ellipse cx="15" cy="24" rx="4.5" ry="4" fill="#9B5DE5"/>
+              <ellipse cx="12" cy="18" rx="4" ry="4" fill="#A29BFE"/>
+              <ellipse cx="18" cy="18" rx="4" ry="4" fill="#818CF8"/>
+              <ellipse cx="15" cy="12" rx="3.5" ry="4" fill="#9B5DE5"/>
+              <circle cx="15" cy="6" r="3" fill="#A29BFE"/>
+            </g>
+          </svg>
+          <span class="picked-tag">picked!</span>
+        </div>
+
+        <!-- 6. HIBISCUS (Bold) -->
+        <div class="garden-flower flower-hibiscus" data-id="hibiscus" data-trait="Bold" style="left: 45%; top: 82%;" title="Hibiscus 🌺">
+          <svg viewBox="0 0 50 70" class="flower-svg">
+            <path class="flower-stem" d="M25,70 Q23,45 25,30" fill="none" stroke="#4C6E43" stroke-width="2.5"/>
+            <g class="flower-bloom animate-wiggle">
+              <!-- Broad Petals -->
+              <ellipse cx="25" cy="20" rx="14" ry="11" fill="#FF4E50" transform="rotate(0, 25, 30)"/>
+              <ellipse cx="25" cy="20" rx="14" ry="11" fill="#FF4E50" transform="rotate(72, 25, 30)"/>
+              <ellipse cx="25" cy="20" rx="14" ry="11" fill="#FF4E50" transform="rotate(144, 25, 30)"/>
+              <ellipse cx="25" cy="20" rx="14" ry="11" fill="#FF4E50" transform="rotate(216, 25, 30)"/>
+              <ellipse cx="25" cy="20" rx="14" ry="11" fill="#FF4E50" transform="rotate(288, 25, 30)"/>
+              <circle cx="25" cy="30" r="7" fill="#F9D423"/>
+              <!-- Stamen -->
+              <path d="M25,30 Q30,12 38,8" fill="none" stroke="#F9D423" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="38" cy="8" r="2.5" fill="#FF4E50"/>
+            </g>
+          </svg>
+          <span class="picked-tag">picked!</span>
+        </div>
+
+        <!-- 7. CHERRY BLOSSOM (Dreamy) -->
+        <div class="garden-flower flower-cherry" data-id="cherry" data-trait="Dreamy" style="left: 3%; top: 64%;" title="Cherry Blossom 🌸">
+          <svg viewBox="0 0 50 70" class="flower-svg">
+            <path class="flower-stem" d="M25,70 Q28,45 25,35" fill="none" stroke="#4C6E43" stroke-width="2"/>
+            <g class="flower-bloom animate-wiggle">
+              <ellipse cx="25" cy="22" rx="11" ry="8" fill="#FDB3C8" transform="rotate(0, 25, 30)"/>
+              <ellipse cx="25" cy="22" rx="11" ry="8" fill="#FDB3C8" transform="rotate(72, 25, 30)"/>
+              <ellipse cx="25" cy="22" rx="11" ry="8" fill="#FDB3C8" transform="rotate(144, 25, 30)"/>
+              <ellipse cx="25" cy="22" rx="11" ry="8" fill="#FDB3C8" transform="rotate(216, 25, 30)"/>
+              <ellipse cx="25" cy="22" rx="11" ry="8" fill="#FDB3C8" transform="rotate(288, 25, 30)"/>
+              <circle cx="25" cy="30" r="5" fill="#E65C84"/>
+              <!-- Small Stamens -->
+              <line x1="25" y1="30" x2="22" y2="22" stroke="#FFFFFF" stroke-width="1"/>
+              <line x1="25" y1="30" x2="28" y2="22" stroke="#FFFFFF" stroke-width="1"/>
+              <line x1="25" y1="30" x2="25" y2="20" stroke="#FFFFFF" stroke-width="1"/>
+            </g>
+          </svg>
+          <span class="picked-tag">picked!</span>
+        </div>
+
+        <!-- 8. BLUE FLOWER (Curious) -->
+        <div class="garden-flower flower-blue" data-id="blue" data-trait="Curious" style="left: 35%; top: 62%;" title="Blue Flower 💠">
+          <svg viewBox="0 0 40 70" class="flower-svg">
+            <path class="flower-stem" d="M20,70 Q18,48 20,32" fill="none" stroke="#4C6E43" stroke-width="2"/>
+            <g class="flower-bloom animate-wiggle">
+              <polygon points="20,10 27,24 41,20 31,31 38,44 24,38 13,46 17,31 5,23 20,24" fill="#00D2FC"/>
+              <polygon points="20,15 25,25 35,22 28,30 33,39 23,35 15,40 18,30 9,24 20,25" fill="#E0F7FA"/>
+              <circle cx="20" cy="28" r="4.5" fill="#0091EA"/>
+            </g>
+          </svg>
+          <span class="picked-tag">picked!</span>
+        </div>
+
+        <!-- 9. WHITE FLOWER (Minimalist) -->
+        <div class="garden-flower flower-white" data-id="white" data-trait="Minimalist" style="left: 55%; top: 78%;" title="White Lily 🤍">
+          <svg viewBox="0 0 40 75" class="flower-svg">
+            <path class="flower-stem" d="M20,75 Q22,50 20,30" fill="none" stroke="#4C6E43" stroke-width="2"/>
+            <path class="flower-leaf" d="M20,50 Q30,45 32,40 Q25,48 20,50 Z" fill="#5F8F54"/>
+            <g class="flower-bloom animate-wiggle">
+              <!-- Elegant single white cup shape -->
+              <path d="M10,24 Q20,35 30,24 Q32,5 20,18 Q8,5 10,24 Z" fill="#FDFDFD"/>
+              <path d="M15,24 Q20,30 25,24 Q26,10 20,20 Q14,10 15,24 Z" fill="#EEEEEE"/>
+              <!-- Yellow pollen tips -->
+              <line x1="20" y1="23" x2="20" y2="14" stroke="#FFD54F" stroke-width="2"/>
+              <line x1="20" y1="23" x2="17" y2="15" stroke="#FFD54F" stroke-width="1.5"/>
+              <line x1="20" y1="23" x2="23" y2="15" stroke="#FFD54F" stroke-width="1.5"/>
+            </g>
+          </svg>
+          <span class="picked-tag">picked!</span>
+        </div>
+
+        <!-- 10. WILDFLOWER (Free-spirited) -->
+        <div class="garden-flower flower-wild" data-id="wild" data-trait="Free-spirited" style="left: 92%; top: 79%;" title="Wildflower 🌿">
+          <svg viewBox="0 0 40 65" class="flower-svg">
+            <path class="flower-stem" d="M20,65 Q17,45 20,30" fill="none" stroke="#4C6E43" stroke-width="1.8"/>
+            <g class="flower-bloom animate-wiggle">
+              <!-- Star-like purple/indigo petals -->
+              <g fill="#A55EEA">
+                <polygon points="20,12 23,22 32,18 25,25 32,32 23,28 20,38 17,28 8,32 15,25 8,18 17,22"/>
+              </g>
+              <circle cx="20" cy="25" r="4.5" fill="#FFEAA7"/>
+            </g>
+          </svg>
+          <span class="picked-tag">picked!</span>
+        </div>
+
+        <!-- 11. HIDDEN FLOWER (Mysterious) -->
+        <div class="garden-flower flower-hidden" data-id="hidden" data-trait="Mysterious" style="left: 5%; top: 88%;" title="Hidden Bud 🌱">
+          <svg viewBox="0 0 30 50" class="flower-svg">
+            <path class="flower-stem" d="M15,50 Q12,30 15,20" fill="none" stroke="#4C6E43" stroke-width="1.5"/>
+            <g class="flower-bloom animate-wiggle">
+              <!-- Tiny glowing green-gold bud -->
+              <path d="M15,20 Q23,12 15,2 Q7,12 15,20 Z" fill="#FFE082" class="glowing-bud"/>
+              <path d="M15,20 Q20,15 15,8 Q10,15 15,20 Z" fill="#81C784"/>
+            </g>
+          </svg>
+          <span class="picked-tag">picked!</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- HUD / Game Controls Bottom Shelf -->
+    <div class="garden-hud paper-texture">
+      <!-- Speech/Comment bubble from Heer -->
+      <div class="hud-bubble">
+        <div class="character-avatar" id="avatar-trigger">🌷</div>
+        <div class="bubble-content">
+          <p class="font-handwritten speech-text" id="heer-speech">“Click on the picnic basket to see what your mission is!”</p>
+        </div>
+      </div>
+
+      <!-- Bouquet Tracker -->
+      <div class="hud-tracker">
+        <div class="tracker-info">
+          <span class="tracker-label">Your Bouquet</span>
+          <span class="tracker-count" id="flower-counter">0 / 6</span>
+        </div>
+        
+        <!-- Grid of the 6 slots for picked flowers -->
+        <div class="bouquet-slots" id="bouquet-shelf">
+          <div class="bouquet-slot" data-slot="0"></div>
+          <div class="bouquet-slot" data-slot="1"></div>
+          <div class="bouquet-slot" data-slot="2"></div>
+          <div class="bouquet-slot" data-slot="3"></div>
+          <div class="bouquet-slot" data-slot="4"></div>
+          <div class="bouquet-slot" data-slot="5"></div>
+        </div>
+      </div>
+
+      <!-- Submit Bouquet Button -->
+      <button class="btn btn-disabled" id="btn-reveal-bouquet" disabled>
+        Let's see what you created 💐
+      </button>
+    </div>
+  </section>
+
+
+  <!-- VIEW 3: BOUQUET ASSEMBLY & PERSONALITY REVEAL -->
+  <section id="bouquet-view" class="view">
+    <div class="bouquet-container paper-texture">
+      
+      <!-- Stage 1: Assembly animation arena -->
+      <div id="assembly-arena" class="assembly-arena">
+        <h2 class="serif-title assembly-title">Okay. Let's see what you created.</h2>
+        
+        <!-- Floating flowers in assembly -->
+        <div class="flying-flowers-wrapper" id="flying-flowers-container"></div>
+        
+        <!-- The center anchor point where flowers form the bouquet -->
+        <div class="bouquet-assembly-spot" id="bouquet-target">
+          <div class="bouquet-sparkle-burst"></div>
+          <div class="ribbon-draw"></div>
+        </div>
+        
+        <button class="btn btn-primary" id="btn-proceed-reveal" style="display: none; margin: 40px auto 0;">Reveal Personality &rarr;</button>
+      </div>
+
+      <!-- Stage 2: Final Bouquet Display, Letter and Personality analysis -->
+      <div id="results-panel" class="results-panel hidden">
+        <header class="results-header">
+          <h1 class="serif-title">A bouquet chosen by you,<br>made for you, from Heer. 💐</h1>
+          <p class="results-intro">But… your bouquet says more about you than you think.</p>
+        </header>
+
+        <div class="results-grid">
+          <!-- Left: Custom rendered vector bouquet -->
+          <div class="bouquet-card">
+            <div class="bouquet-render-area" id="final-bouquet-graphics">
+              <!-- Dynamically populated SVG bouquet of selected flowers -->
+            </div>
+            <div class="bouquet-card-label">Your Unique Bouquet 💐</div>
+          </div>
+
+          <!-- Right: Personality Traits -->
+          <div class="personality-card">
+            <h3 class="serif-subtitle">Your Personality Blueprint</h3>
+            
+            <div class="traits-container" id="personality-traits-list">
+              <!-- Dynamically filled with matching personality analysis items -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Handwritten adaptive letter from Heer -->
+        <div class="letter-wrapper">
+          <div class="parchment-letter font-handwritten">
+            <div class="letter-content" id="heer-letter-text">
+              <!-- Dynamically generated cute adaptive message from Heer -->
+            </div>
+            <div class="letter-sign-off">&mdash; Heer 🌷</div>
+          </div>
+        </div>
+
+        <!-- Final controls -->
+        <div class="final-actions">
+          <button class="btn btn-secondary" id="btn-action-picnic">🧺 Return to Picnic</button>
+          <button class="btn btn-secondary" id="btn-action-letter">💌 Read Heer's Note Again</button>
+          <button class="btn btn-primary" id="btn-action-reset">🌷 Pick Again</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- MODAL 1: PICNIC BASKET NOTE -->
+  <div class="modal-overlay" id="modal-basket">
+    <div class="modal-card paper-texture">
+      <span class="modal-close" id="close-basket-modal">&times;</span>
+      <div class="modal-flower-header">🧺</div>
+      
+      <div class="note-envelope">
+        <p class="dialogue-text font-handwritten">“Your mission:”</p>
+        <h3 class="serif-subtitle font-handwritten">Make me a bouquet.</h3>
+        <p class="dialogue-text font-handwritten">
+          “You are allowed exactly 6 flowers.<br>
+          Pick them based purely on what you like.”
+        </p>
+        <p class="dialogue-text font-handwritten note-warning">
+          “No overthinking.<br>
+          I want to see your taste.”
+        </p>
+      </div>
+
+      <button class="btn btn-primary" id="btn-close-basket-note">ENTER THE GARDEN 🌷</button>
+    </div>
+  </div>
+
+
+  <!-- MODAL 2: POLAROID VIEW -->
+  <div class="modal-overlay" id="modal-polaroid">
+    <div class="modal-card polaroid-modal paper-texture">
+      <span class="modal-close" id="close-polaroid-modal">&times;</span>
+      
+      <div class="polaroid-modal-frame">
+        <img src="assets/images/picnic_scene.jpg" alt="A picnic with Heer" class="polaroid-modal-img">
+        <div class="polaroid-modal-caption font-handwritten">
+          Heer and You, picnic under the Ghibli clouds 🌸
+        </div>
+      </div>
+      
+      <p class="polaroid-modal-sub font-handwritten">“A little sketch Heer drew of you two having a picnic. She left it here for you to find.”</p>
+    </div>
+  </div>
+
+
+  <!-- MODAL 3: LETTER BACKUP -->
+  <div class="modal-overlay" id="modal-letter">
+    <div class="modal-card paper-texture">
+      <span class="modal-close" id="close-letter-modal">&times;</span>
+      <div class="modal-flower-header">💌</div>
+      
+      <div class="parchment-letter font-handwritten" style="box-shadow: none; border: none; background: transparent; padding: 0;">
+        <div class="letter-content" id="modal-letter-text">
+          <!-- Dynamically populated letter from Heer -->
+        </div>
+        <div class="letter-sign-off">&mdash; Heer 🌷</div>
+      </div>
+      
+      <button class="btn btn-primary" id="btn-close-letter-modal" style="margin-top: 20px;">Keep Bouquet 💖</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1421 @@
+/* ==========================================================================
+   A LITTLE GARDEN FROM HEER - CSS STYLE SHEET
+   Ghibli-inspired design, custom animations, and responsive layout
+   ========================================================================== */
+
+/* --- Custom CSS Variables & Tokens --- */
+:root {
+  --color-sky-top: #CAE9FF;
+  --color-sky-bot: #FDFBF7;
+  --color-grass-light: #C2E094;
+  --color-grass-dark: #8FB96E;
+  --color-pond: #BCE3F5;
+  --color-path: #F4E3C9;
+  --color-wood: #8B5E3C;
+  --color-wood-light: #A77A55;
+  
+  --color-bg-paper: #FFFDF9;
+  --color-bg-card: rgba(255, 255, 255, 0.85);
+  
+  --color-text-main: #4A403A;
+  --color-text-muted: #7E7067;
+  --color-accent-pink: #F495B4;
+  --color-accent-pink-dark: #D76B8E;
+  --color-accent-green: #6EA664;
+  
+  --font-ui: 'Quicksand', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-handwriting: 'Caveat', cursive;
+  
+  --shadow-soft: 0 10px 30px rgba(74, 64, 58, 0.08);
+  --shadow-medium: 0 15px 45px rgba(74, 64, 58, 0.15);
+  --shadow-crisp: 0 8px 0px rgba(74, 64, 58, 0.1);
+  --border-organic: 255px 15px 225px 15px/15px 225px 15px 255px;
+}
+
+/* --- Base Resets & Global Styles --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  color: var(--font-ui);
+  background-color: #F7F4EB;
+  color: var(--color-text-main);
+  overflow-x: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background-image: 
+    radial-gradient(rgba(244, 149, 180, 0.1) 1px, transparent 0),
+    radial-gradient(rgba(110, 166, 100, 0.1) 1px, transparent 0);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+/* --- Sound Control --- */
+.audio-control {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: var(--color-bg-card);
+  border: 2px solid var(--color-text-main);
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  width: 44px;
+  height: 44px;
+}
+.audio-control:hover {
+  transform: scale(1.1);
+  background-color: #FFFFFF;
+}
+.audio-control .sound-off {
+  display: none;
+}
+.audio-control.muted .sound-on {
+  display: none;
+}
+.audio-control.muted .sound-off {
+  display: block;
+}
+
+/* --- Paper Texture Overlay Filter --- */
+.paper-texture {
+  position: relative;
+}
+.paper-texture::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.04;
+  z-index: 999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* --- Views Transitions --- */
+.view {
+  display: none;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  transition: opacity 0.5s ease-in-out;
+}
+.view.active {
+  display: flex;
+  opacity: 1;
+}
+
+/* --- Typography Helpers --- */
+.serif-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  color: var(--color-text-main);
+  text-align: center;
+  margin-bottom: 20px;
+}
+.serif-subtitle {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  color: var(--color-text-main);
+}
+.font-handwritten {
+  font-family: var(--font-handwriting);
+  font-size: 1.6rem;
+  line-height: 1.4;
+  color: var(--color-accent-pink-dark);
+}
+.hidden {
+  display: none !important;
+}
+
+/* --- Custom Buttons --- */
+.btn {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 3px solid var(--color-text-main);
+  box-shadow: var(--shadow-crisp);
+  outline: none;
+}
+.btn-primary {
+  background-color: var(--color-accent-pink);
+  color: white;
+}
+.btn-primary:hover {
+  transform: translateY(-3px);
+  background-color: #FFFDF9;
+  color: var(--color-accent-pink-dark);
+  box-shadow: 0 11px 0px rgba(74, 64, 58, 0.1);
+}
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 0px rgba(74, 64, 58, 0.1);
+}
+.btn-secondary {
+  background-color: #FFFDF9;
+  color: var(--color-text-main);
+}
+.btn-secondary:hover {
+  transform: translateY(-3px);
+  background-color: var(--color-accent-pink);
+  color: white;
+  box-shadow: 0 11px 0px rgba(74, 64, 58, 0.1);
+}
+.btn-disabled {
+  background-color: #E2DDD5;
+  color: #A6A096;
+  border-color: #A6A096;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   VIEW 1: GENDER SELECTION / INTRO
+   ========================================================================== */
+#intro-view {
+  flex-direction: column;
+}
+.intro-card {
+  background-color: var(--color-bg-paper);
+  border: 4px solid var(--color-text-main);
+  border-radius: 36px;
+  padding: 40px 30px;
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+  box-shadow: var(--shadow-medium);
+  border-radius: 40px 25px 45px 30px/30px 40px 30px 45px;
+  animation: float-bounce 6s ease-in-out infinite;
+}
+.intro-flower-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  display: inline-block;
+  animation: sway 3s ease-in-out infinite alternate;
+}
+.intro-dialogue {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: fadeIn 0.4s ease-out forwards;
+}
+.dialogue-text {
+  font-size: 1.15rem;
+  color: var(--color-text-muted);
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.gender-selection {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+}
+.gender-card {
+  flex: 1;
+  background: white;
+  border: 3px solid var(--color-text-main);
+  border-radius: 20px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-crisp);
+}
+.gender-card:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 13px 0 rgba(74, 64, 58, 0.1);
+  border-color: var(--color-accent-pink);
+}
+.gender-card:active {
+  transform: translateY(0);
+}
+.gender-card.boy:hover {
+  background-color: #EDF7FF;
+}
+.gender-card.girl:hover {
+  background-color: #FFF0F5;
+}
+.gender-emoji {
+  font-size: 3rem;
+}
+.gender-label {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.personalized-note {
+  background-color: #FFFBEF;
+  border: 2px dashed var(--color-text-muted);
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 15px;
+  width: 100%;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.personalized-note p {
+  margin-bottom: 8px;
+}
+.personalized-note p:last-child {
+  margin-bottom: 0;
+}
+.note-warning {
+  font-weight: bold;
+}
+
+.from-heer-envelope {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin: 10px 0 15px;
+}
+.envelope-seal {
+  font-size: 2.2rem;
+  animation: heartbeat 2s infinite ease-in-out;
+}
+.envelope-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   VIEW 2: GARDEN WINDOW GAME CONTAINER
+   ========================================================================== */
+#garden-view {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  max-height: 800px;
+  aspect-ratio: 4/3;
+  border: 6px solid var(--color-bg-paper);
+  border-radius: 36px;
+  box-shadow: var(--shadow-medium);
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--color-sky-top) 0%, var(--color-sky-bot) 100%);
+  display: none;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0;
+}
+#garden-view.active {
+  display: flex;
+}
+
+/* --- Sky & Ambient Layers --- */
+.sky-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  pointer-events: none;
+  z-index: 1;
+}
+.sun-glow {
+  position: absolute;
+  top: -40px;
+  left: 45%;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(254, 237, 185, 0.6) 0%, rgba(254, 237, 185, 0) 70%);
+  border-radius: 50%;
+  animation: shine 8s ease-in-out infinite alternate;
+}
+.cloud {
+  position: absolute;
+  font-size: 2.5rem;
+  opacity: 0.45;
+  pointer-events: none;
+}
+.cloud-1 { top: 15%; left: 10%; animation: drift 42s linear infinite; }
+.cloud-2 { top: 8%; left: 55%; animation: drift 35s linear infinite reverse; }
+.cloud-3 { top: 22%; left: 80%; animation: drift 50s linear infinite; }
+
+/* --- Grass Ground & Layout --- */
+.garden-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: radial-gradient(ellipse at 50% 0%, var(--color-grass-light) 40%, var(--color-grass-dark) 100%);
+  z-index: 2;
+  border-top-left-radius: 60% 15%;
+  border-top-right-radius: 65% 15%;
+}
+
+/* --- Parallax & Placement Environment Elements --- */
+.garden-element {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Trees swaying */
+.tree {
+  bottom: 85%;
+  height: 110px;
+  width: 80px;
+  transform-origin: bottom center;
+  animation: wind-sway 4s ease-in-out infinite alternate;
+}
+.tree-left { left: 8%; }
+.tree-right { right: 12%; animation-delay: -1.5s; height: 95px; width: 65px; }
+
+/* Pathway */
+.garden-path {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Small Pond */
+.pond {
+  left: 60%;
+  bottom: 48%;
+  width: 140px;
+  height: 84px;
+  z-index: 4;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.pond-ripple {
+  transform-origin: center;
+  animation: ripple-expand 4s linear infinite;
+}
+.ripple-2 {
+  animation-delay: 2s;
+}
+
+/* Picnic Blanket Setup */
+.picnic-blanket {
+  left: 30%;
+  bottom: 22%;
+  width: 180px;
+  height: 100px;
+  z-index: 5;
+  transform: rotate(-3deg);
+}
+.picnic-cloth {
+  width: 100%;
+  height: 100%;
+  background-color: #FFFDF9;
+  background-image: 
+    linear-gradient(45deg, rgba(244, 149, 180, 0.3) 25%, transparent 25%), 
+    linear-gradient(-45deg, rgba(244, 149, 180, 0.3) 25%, transparent 25%), 
+    linear-gradient(45deg, transparent 75%, rgba(244, 149, 180, 0.3) 75%), 
+    linear-gradient(-45deg, transparent 75%, rgba(244, 149, 180, 0.3) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+  border-radius: 12px;
+  border: 3px solid var(--color-text-main);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  pointer-events: auto;
+}
+.picnic-cushion {
+  position: absolute;
+  width: 38px;
+  height: 24px;
+  border: 2px solid var(--color-text-main);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.cushion-pink {
+  background-color: var(--color-accent-pink);
+  left: -20px;
+  top: 25px;
+  transform: rotate(-25deg);
+}
+.cushion-blue {
+  background-color: #BCE3F5;
+  right: -15px;
+  top: 35px;
+  transform: rotate(15deg);
+}
+.picnic-items {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 10px;
+}
+.picnic-item {
+  font-size: 1.4rem;
+  pointer-events: auto;
+  cursor: help;
+  transition: transform 0.2s ease;
+}
+.picnic-item:hover {
+  transform: scale(1.2) translateY(-2px);
+}
+.polaroid-photo {
+  position: absolute;
+  bottom: 5px;
+  left: 15px;
+  background: white;
+  padding: 4px 4px 12px 4px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  border: 1px solid #EAEAEA;
+  transform: rotate(8deg);
+  width: 48px;
+  height: 52px;
+  cursor: zoom-in;
+  pointer-events: auto;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.polaroid-photo:hover {
+  transform: scale(1.6) rotate(0deg) translateY(-8px);
+  z-index: 100;
+}
+.polaroid-img-wrapper {
+  width: 100%;
+  height: 34px;
+  overflow: hidden;
+  background-color: #EEE;
+}
+.polaroid-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.polaroid-caption {
+  font-size: 0.35rem;
+  text-align: center;
+  margin-top: 3px;
+  font-weight: bold;
+}
+
+/* Picnic Basket trigger click */
+.picnic-basket-wrapper {
+  position: absolute;
+  top: -24px;
+  right: 15px;
+  width: 50px;
+  height: 40px;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 8;
+}
+.basket-body {
+  font-size: 2.8rem;
+  line-height: 1;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+.picnic-basket-wrapper:hover .basket-body {
+  animation: wiggle-rotate 0.5s ease-in-out infinite alternate;
+}
+.basket-sparkle {
+  position: absolute;
+  top: -8px;
+  right: -5px;
+  font-size: 1.1rem;
+  animation: pulsate 1.5s infinite ease-in-out;
+  color: var(--color-accent-pink);
+  z-index: 3;
+}
+
+/* Signposts */
+.garden-signpost {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 6;
+  pointer-events: auto;
+  cursor: pointer;
+  transform-origin: bottom center;
+  transition: transform 0.3s ease;
+}
+.garden-signpost:hover {
+  transform: rotate(5deg) scale(1.03);
+}
+.sign-board {
+  background-color: var(--color-wood-light);
+  color: #FFFCEF;
+  border: 2px solid var(--color-wood);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  line-height: 1.3;
+}
+.sign-post {
+  width: 6px;
+  height: 25px;
+  background-color: var(--color-wood);
+}
+.sign-left {
+  left: 20%;
+  bottom: 50%;
+}
+.sign-right {
+  right: 25%;
+  bottom: 45%;
+}
+
+/* Butterflies and Bees */
+.butterfly, .bee {
+  position: absolute;
+  font-size: 1.4rem;
+  pointer-events: none;
+  z-index: 7;
+}
+#butterfly-1 {
+  left: 15%;
+  top: 30%;
+  animation: path-flutter-1 15s linear infinite;
+}
+#butterfly-2 {
+  right: 20%;
+  top: 40%;
+  animation: path-flutter-2 18s linear infinite;
+}
+#bee-1 {
+  left: 50%;
+  top: 55%;
+  animation: path-buzz 12s linear infinite;
+}
+
+/* Fireflies */
+.firefly {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #FFF59D;
+  box-shadow: 0 0 10px 4px rgba(255, 245, 157, 0.8);
+  pointer-events: none;
+  z-index: 8;
+  opacity: 0;
+  animation: glow-float 6s infinite ease-in-out;
+}
+.firefly-1 { left: 45%; top: 60%; animation-delay: 0s; }
+.firefly-2 { left: 70%; top: 50%; animation-delay: 1.5s; }
+.firefly-3 { left: 35%; top: 40%; animation-delay: 3s; }
+.firefly-4 { left: 82%; top: 58%; animation-delay: 4.5s; }
+
+/* --- Flowers in the Field --- */
+.flower-field {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 6;
+  pointer-events: none;
+}
+.garden-flower {
+  position: absolute;
+  width: 44px;
+  height: 66px;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-origin: bottom center;
+}
+.flower-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.flower-stem, .flower-leaf {
+  transition: stroke 0.3s ease, fill 0.3s ease;
+}
+.flower-bloom {
+  transform-origin: 25px 25px;
+}
+
+/* Sway animation applied to flower stem and blooms */
+.garden-flower:hover {
+  transform: translateY(-8px) scale(1.2);
+  filter: drop-shadow(0 5px 8px rgba(244,149,180,0.5));
+}
+.garden-flower:hover .flower-bloom {
+  animation: wiggle-rotate 0.3s ease-in-out infinite alternate;
+}
+
+/* Plucked State */
+.garden-flower.plucked {
+  opacity: 0.25;
+  filter: grayscale(0.8) scale(0.9);
+  pointer-events: auto;
+}
+.garden-flower.plucked:hover {
+  transform: none;
+  filter: grayscale(0.8) scale(0.9);
+}
+
+/* Picked label badge */
+.picked-tag {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  background-color: var(--color-accent-pink);
+  color: white;
+  font-size: 0.5rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--color-text-main);
+  text-transform: uppercase;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  pointer-events: none;
+}
+.garden-flower.plucked .picked-tag {
+  transform: translateX(-50%) scale(1);
+}
+
+/* Glowing animation for hidden bud */
+.glowing-bud {
+  animation: glow-bud-pulse 2s infinite alternate ease-in-out;
+}
+
+/* --- HUD Bottom Panel --- */
+.garden-hud {
+  width: 100%;
+  background-color: var(--color-bg-paper);
+  border-top: 4px solid var(--color-text-main);
+  padding: 15px 24px;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1.4fr 1.6fr 1fr;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 -10px 25px rgba(0,0,0,0.05);
+}
+
+/* Speech avatar & speech bubbles */
+.hud-bubble {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.character-avatar {
+  font-size: 2.2rem;
+  background-color: #FFF0F5;
+  border: 2px solid var(--color-text-main);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  animation: float-bounce 4s ease-in-out infinite;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.bubble-content {
+  background: white;
+  border: 2px solid var(--color-text-main);
+  border-radius: 16px;
+  padding: 10px 14px;
+  position: relative;
+  box-shadow: 0 4px 0px rgba(74, 64, 58, 0.05);
+  flex-grow: 1;
+}
+.bubble-content::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-left: 2px solid var(--color-text-main);
+  border-bottom: 2px solid var(--color-text-main);
+}
+.speech-text {
+  font-size: 1.25rem;
+  color: var(--color-accent-pink-dark);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Bouquet Shelf tracker */
+.hud-tracker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tracker-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.tracker-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+.tracker-count {
+  font-weight: 700;
+  font-size: 1.1rem;
+  background-color: var(--color-accent-pink);
+  color: white;
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 2px solid var(--color-text-main);
+}
+.bouquet-slots {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+.bouquet-slot {
+  flex: 1;
+  aspect-ratio: 1;
+  background-color: #FFFDF9;
+  border: 2px dashed var(--color-text-muted);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  font-size: 1.5rem;
+}
+.bouquet-slot:hover {
+  background-color: #FFF0F5;
+  border-color: var(--color-accent-pink);
+}
+.bouquet-slot.filled {
+  border-style: solid;
+  border-color: var(--color-text-main);
+  background-color: #FFFDF9;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.bouquet-slot.filled svg {
+  width: 80%;
+  height: 80%;
+}
+
+/* ==========================================================================
+   VIEW 3: BOUQUET ASSEMBLY & PERSONALITY PANEL
+   ========================================================================== */
+#bouquet-view {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.bouquet-container {
+  background-color: var(--color-bg-paper);
+  border: 4px solid var(--color-text-main);
+  border-radius: 36px;
+  padding: 40px;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: var(--shadow-medium);
+  border-radius: 35px 45px 30px 40px/40px 30px 45px 35px;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Stage 1: Assembly Arena */
+.assembly-arena {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+.assembly-title {
+  margin-bottom: 50px;
+}
+.bouquet-assembly-spot {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border: 3px dashed var(--color-text-muted);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255,255,255,0.4);
+}
+.flying-flower-asset {
+  position: absolute;
+  width: 44px;
+  height: 66px;
+  pointer-events: none;
+  z-index: 100;
+  transition: all 1.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.flying-flower-asset svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Bouquet wrapping ribbon SVG */
+.ribbon-draw {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.ribbon-draw.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Sparkles when assembled */
+.bouquet-sparkle-burst {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,235,167,0.8) 0%, rgba(255,235,167,0) 70%);
+  opacity: 0;
+  transform: scale(0.2);
+  transition: all 0.5s ease-out;
+}
+.bouquet-sparkle-burst.burst {
+  opacity: 1;
+  transform: scale(2.2);
+}
+
+/* Stage 2: Results Display Panel */
+.results-panel {
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.8s ease forwards;
+  gap: 30px;
+}
+.results-header {
+  text-align: center;
+}
+.results-intro {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+}
+.results-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1.3fr;
+  gap: 30px;
+  align-items: stretch;
+}
+
+/* Bouquet visualization graphic card */
+.bouquet-card {
+  background: white;
+  border: 3px solid var(--color-text-main);
+  border-radius: 24px;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-crisp);
+}
+.bouquet-render-area {
+  width: 220px;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bouquet-card-label {
+  font-weight: 700;
+  margin-top: 15px;
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+  background-color: #FFF0F5;
+  border: 1px solid var(--color-accent-pink);
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+
+/* Personality display cards */
+.personality-card {
+  background: #FFFDF9;
+  border: 3px solid var(--color-text-main);
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: var(--shadow-crisp);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.personality-card h3 {
+  font-size: 1.4rem;
+  border-bottom: 2px dashed #E2DDD5;
+  padding-bottom: 10px;
+}
+.traits-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+  max-height: 260px;
+  padding-right: 8px;
+}
+
+/* Individual personality profile layout */
+.trait-item {
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.trait-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.trait-badge {
+  background-color: var(--color-accent-pink);
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 2px solid var(--color-text-main);
+  text-transform: uppercase;
+}
+.trait-score {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+.trait-desc {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+/* Adaptive handwritten parchment letter */
+.letter-wrapper {
+  margin: 10px 0;
+  perspective: 1000px;
+}
+.parchment-letter {
+  background-color: #FCF7E8;
+  background-image: 
+    linear-gradient(rgba(240, 230, 200, 0.15) 1px, transparent 1px);
+  background-size: 100% 28px;
+  border: 2px solid #E2D4B7;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(139, 94, 60, 0.15);
+  transform: rotate(-1deg);
+  position: relative;
+}
+.parchment-letter::before {
+  content: '🌷';
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  opacity: 0.3;
+}
+.letter-content {
+  font-size: 1.7rem;
+  color: #8C5226;
+  margin-bottom: 20px;
+  line-height: 1.4;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+.letter-sign-off {
+  font-size: 1.8rem;
+  color: #8C5226;
+  text-align: right;
+  font-weight: 700;
+}
+
+.final-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   MODAL WINDOW DIALOGS
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(74, 64, 58, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+.modal-card {
+  background-color: var(--color-bg-paper);
+  border: 4px solid var(--color-text-main);
+  border-radius: 32px;
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+  box-shadow: var(--shadow-medium);
+  position: relative;
+  text-align: center;
+  transform: scale(0.85);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.modal-overlay.active .modal-card {
+  transform: scale(1);
+}
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 2rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+.modal-close:hover {
+  color: var(--color-accent-pink-dark);
+}
+.modal-flower-header {
+  font-size: 3.5rem;
+  margin-bottom: 15px;
+  animation: float-bounce 4s ease-in-out infinite;
+  display: inline-block;
+}
+.note-envelope {
+  background-color: #FFFDF9;
+  border: 2px dashed var(--color-accent-pink);
+  border-radius: 20px;
+  padding: 24px;
+  margin: 15px 0 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: var(--shadow-soft);
+}
+.note-envelope .serif-subtitle {
+  font-size: 1.5rem;
+  color: var(--color-accent-pink-dark);
+}
+
+/* Polaroid Modal Special styles */
+.polaroid-modal {
+  max-width: 600px;
+}
+.polaroid-modal-frame {
+  background: white;
+  border: 2px solid var(--color-text-main);
+  padding: 16px 16px 40px 16px;
+  box-shadow: var(--shadow-crisp);
+  transform: rotate(-2deg);
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+.polaroid-modal-img {
+  width: 100%;
+  max-height: 380px;
+  object-fit: cover;
+  border: 2px solid var(--color-text-main);
+  border-radius: 4px;
+  background-color: #EEE;
+}
+.polaroid-modal-caption {
+  font-size: 1.8rem;
+  color: var(--color-accent-pink-dark);
+  text-align: center;
+  margin-top: 15px;
+}
+.polaroid-modal-sub {
+  font-size: 1.3rem;
+  color: var(--color-text-muted);
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   AMBIENT FLOATING PETALS
+   ========================================================================== */
+.petal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 99;
+  overflow: hidden;
+}
+.petal {
+  position: absolute;
+  background-color: #FDB3C8;
+  border-radius: 150px 0px 150px 150px/150px 0px 150px 150px;
+  opacity: 0.8;
+  transform-origin: center;
+  pointer-events: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* ==========================================================================
+   DYNAMIC KEYFRAME ANIMATIONS
+   ========================================================================== */
+
+/* Wind swaying (tree/grass/flower stems) */
+@keyframes wind-sway {
+  0% { transform: rotate(-2deg); }
+  100% { transform: rotate(3deg); }
+}
+
+/* Interactive wiggle rotation */
+@keyframes wiggle-rotate {
+  0% { transform: rotate(-8deg) scale(1.1); }
+  100% { transform: rotate(8deg) scale(1.1); }
+}
+
+/* Floating bobbing */
+@keyframes float-bounce {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+/* Shimmer/pulse of lid sparkle */
+@keyframes pulsate {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+/* Sunset shine rays */
+@keyframes shine {
+  0% { transform: scale(1) rotate(0deg); opacity: 0.5; }
+  100% { transform: scale(1.2) rotate(10deg); opacity: 0.8; }
+}
+
+/* Cloud drifting */
+@keyframes drift {
+  0% { transform: translateX(-15vw); }
+  100% { transform: translateX(105vw); }
+}
+
+/* Pond Ripples expanding */
+@keyframes ripple-expand {
+  0% { transform: scale(0.5); opacity: 0; }
+  10% { opacity: 0.8; }
+  50% { opacity: 0.3; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* Glow pulse for secret bud */
+@keyframes glow-bud-pulse {
+  0% { fill: #FFE082; filter: drop-shadow(0 0 2px #FFF59D); }
+  100% { fill: #FFE57F; filter: drop-shadow(0 0 10px #FFD740); }
+}
+
+/* Firefly glow float */
+@keyframes glow-float {
+  0% { opacity: 0; transform: translateY(0) scale(0.8); }
+  30% { opacity: 0.8; }
+  50% { transform: translateY(-12px) translateX(6px) scale(1); }
+  80% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-24px) scale(0.8); }
+}
+
+/* Standard Fade In */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* standard Pop In elastic */
+@keyframes popIn {
+  0% { transform: scale(0.75); opacity: 0; }
+  70% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Heartbeat envelope seal */
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.15); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.15); }
+  70% { transform: scale(1); }
+}
+
+/* Flying butterflies bezier loops */
+@keyframes path-flutter-1 {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(60px, -20px) rotate(15deg); }
+  50% { transform: translate(120px, 10px) rotate(-10deg); }
+  75% { transform: translate(40px, 40px) rotate(10deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+@keyframes path-flutter-2 {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(-80px, 30px) rotate(-15deg); }
+  66% { transform: translate(-30px, -40px) rotate(10deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+@keyframes path-buzz {
+  0% { transform: translate(0,0) scaleX(1); }
+  20% { transform: translate(-40px, -15px) scaleX(1); }
+  40% { transform: translate(-80px, 0) scaleX(-1); }
+  60% { transform: translate(-30px, 20px) scaleX(-1); }
+  80% { transform: translate(30px, -10px) scaleX(1); }
+  100% { transform: translate(0,0) scaleX(1); }
+}
+
+
+/* ==========================================================================
+   MOBILE & RESPONSIVE COMPATIBILITY
+   ========================================================================== */
+@media (max-width: 992px) {
+  #garden-view {
+    height: auto;
+    aspect-ratio: auto;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    flex-grow: 1;
+    width: 100vw;
+  }
+  .garden-container {
+    height: 65%;
+  }
+  .garden-hud {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 15px;
+  }
+  .hud-bubble {
+    order: 2;
+  }
+  .hud-tracker {
+    order: 1;
+  }
+  #btn-reveal-bouquet {
+    order: 3;
+    width: 100%;
+  }
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+  .bouquet-container {
+    padding: 20px;
+    border-radius: 20px;
+  }
+  .letter-content {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 576px) {
+  body {
+    padding: 0;
+  }
+  .intro-card {
+    border-radius: 0;
+    border: none;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 100%;
+    animation: none;
+  }
+  .view {
+    padding: 0;
+  }
+  .garden-flower {
+    width: 38px;
+    height: 57px;
+  }
+  .picnic-blanket {
+    width: 150px;
+    height: 80px;
+  }
+  .polaroid-photo {
+    width: 40px;
+    height: 44px;
+  }
+  .polaroid-img-wrapper {
+    height: 28px;
+  }
+  .pond {
+    width: 110px;
+    height: 66px;
+  }
+  .tree {
+    height: 80px;
+    width: 55px;
+  }
+  .font-handwritten {
+    font-size: 1.3rem;
+  }
+  .final-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .final-actions .btn {
+    width: 100%;
+  }
+}
