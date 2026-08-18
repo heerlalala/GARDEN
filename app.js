@@ -109,21 +109,28 @@ const countsComments = {
 let audioCtx = null;
 
 function getAudioContext() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  try {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    return audioCtx;
+  } catch (e) {
+    console.warn("Web Audio API is not supported or blocked in this browser:", e);
+    return null;
   }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-  return audioCtx;
 }
 
 function playSound(type) {
   if (state.soundMuted) return;
-  const ctx = getAudioContext();
-  const now = ctx.currentTime;
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
 
-  switch (type) {
+    switch (type) {
     case 'click': {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -227,6 +234,9 @@ function playSound(type) {
       osc.stop(now + 0.35);
       break;
     }
+  }
+  } catch (e) {
+    console.warn("playSound failed:", e);
   }
 }
 
@@ -485,10 +495,18 @@ function setupEventListeners() {
   });
 
   btnProceedReveal.addEventListener('click', () => {
-    playSound('click');
-    document.getElementById('assembly-arena').classList.add('hidden');
-    document.getElementById('results-panel').classList.remove('hidden');
-    renderPersonalityAndLetter();
+    try {
+      playSound('click');
+    } catch (e) {
+      console.warn("playSound click failed:", e);
+    }
+    try {
+      document.getElementById('assembly-arena').classList.add('hidden');
+      document.getElementById('results-panel').classList.remove('hidden');
+      renderPersonalityAndLetter();
+    } catch (e) {
+      console.error("Reveal transition failed:", e);
+    }
   });
 
   // --- FINAL SCREEN CONTROL ACTIONS ---
@@ -717,169 +735,177 @@ function triggerBouquetAssembly() {
 
 // --- Personality Scoring & Letter Renderer ---
 function renderPersonalityAndLetter() {
-  // 1. Compile final fanned bouquet graphics
-  renderFinalBouquet();
-  
-  // 2. Count traits frequencies
-  const traitsCount = {};
-  state.pickedFlowers.forEach(id => {
-    const trait = flowersData[id].trait;
-    traitsCount[trait] = (traitsCount[trait] || 0) + 1;
-  });
-  
-  // Sort traits by highest frequency
-  const sortedTraits = Object.keys(traitsCount).sort((a, b) => traitsCount[b] - traitsCount[a]);
-  const primaryTrait = sortedTraits[0];
-  
-  // Generate list elements of selected traits
-  const traitsList = document.getElementById('personality-traits-list');
-  traitsList.innerHTML = '';
-  
-  // Map out descriptors
-  sortedTraits.forEach(traitName => {
-    // Find matching flower data for description
-    let flowerMatch = null;
-    for (const key in flowersData) {
-      if (flowersData[key].trait === traitName) {
-        flowerMatch = flowersData[key];
-        break;
-      }
-    }
+  try {
+    // 1. Compile final fanned bouquet graphics
+    renderFinalBouquet();
     
-    if (flowerMatch) {
-      const traitCount = traitsCount[traitName];
-      const percent = Math.round((traitCount / 6) * 100);
+    // 2. Count traits frequencies
+    const traitsCount = {};
+    state.pickedFlowers.forEach(id => {
+      const trait = flowersData[id].trait;
+      traitsCount[trait] = (traitsCount[trait] || 0) + 1;
+    });
+    
+    // Sort traits by highest frequency
+    const sortedTraits = Object.keys(traitsCount).sort((a, b) => traitsCount[b] - traitsCount[a]);
+    const primaryTrait = sortedTraits[0];
+    
+    // Generate list elements of selected traits
+    const traitsList = document.getElementById('personality-traits-list');
+    traitsList.innerHTML = '';
+    
+    // Map out descriptors
+    sortedTraits.forEach(traitName => {
+      // Find matching flower data for description
+      let flowerMatch = null;
+      for (const key in flowersData) {
+        if (flowersData[key].trait === traitName) {
+          flowerMatch = flowersData[key];
+          break;
+        }
+      }
       
-      const item = document.createElement('div');
-      item.className = 'trait-item';
-      item.innerHTML = `
-        <div class="trait-title-row">
-          <span class="trait-badge" style="background-color: ${flowerMatch.badgeColor}">${traitName}</span>
-          <span class="trait-score">${traitCount} / 6 (${percent}%)</span>
-        </div>
-        <p class="trait-desc">${flowerMatch.description}</p>
-      `;
-      traitsList.appendChild(item);
+      if (flowerMatch) {
+        const traitCount = traitsCount[traitName];
+        const percent = Math.round((traitCount / 6) * 100);
+        
+        const item = document.createElement('div');
+        item.className = 'trait-item';
+        item.innerHTML = `
+          <div class="trait-title-row">
+            <span class="trait-badge" style="background-color: ${flowerMatch.badgeColor}">${traitName}</span>
+            <span class="trait-score">${traitCount} / 6 (${percent}%)</span>
+          </div>
+          <p class="trait-desc">${flowerMatch.description}</p>
+        `;
+        traitsList.appendChild(item);
+      }
+    });
+
+    // 3. Assemble dynamic handwriting note from Heer
+    const letterTextContainer = document.getElementById('heer-letter-text');
+    const modalLetterContainer = document.getElementById('modal-letter-text');
+    
+    // Personalize comment lines depending on primary trait and selected gender
+    let traitComment = "";
+    switch (primaryTrait) {
+      case 'Romantic':
+        traitComment = "I knew you were secretly sentimental, by the way. You pretend to be all tough, but look at all those romantic choices.";
+        break;
+      case 'Sunny':
+        traitComment = "Your choices are basically rays of pure sunshine. I love how warm and optimistic your bouquet feels.";
+        break;
+      case 'Elegant':
+        traitComment = "It feels incredibly tasteful and clean. Minimal effort, maximum class. I respect that.";
+        break;
+      case 'Playful':
+        traitComment = "Honestly, it looks like you just picked flowers like they were sweets. Zero strategy, 100% vibes. Super cute.";
+        break;
+      case 'Calm':
+        traitComment = "It feels so peaceful and soothing. Your bouquet basically looks like it needs a warm chamomile tea, which is very cozy.";
+        break;
+      case 'Bold':
+        traitComment = "Woah, okay. Your choices made a huge statement. No boring options here—you chose things that capture attention.";
+        break;
+      case 'Dreamy':
+        traitComment = "It has a super dreamy, starry aesthetic. It's like a soft pastel scene from a movie we haven't filmed yet.";
+        break;
+      case 'Curious':
+        traitComment = "You picked the rare and unique flowers. It proves that predictable is never really your thing.";
+        break;
+      case 'Minimalist':
+        traitComment = "It's so balanced and simple. You don't need excessive clutter to make something look absolutely beautiful.";
+        break;
+      case 'Free-spirited':
+        traitComment = "It's organic, wild, and natural. Your bouquet has this cool, untamed energy that defies standard borders.";
+        break;
+      case 'Mysterious':
+        traitComment = "You actually searched out the hidden golden bud! You notice the tiny magic details that most people completely miss.";
+        break;
+      default:
+        traitComment = "It is uniquely yours, a complete blend of different styles.";
     }
-  });
 
-  // 3. Assemble dynamic handwriting note from Heer
-  const letterTextContainer = document.getElementById('heer-letter-text');
-  const modalLetterContainer = document.getElementById('modal-letter-text');
-  
-  // Personalize comment lines depending on primary trait and selected gender
-  let traitComment = "";
-  switch (primaryTrait) {
-    case 'Romantic':
-      traitComment = "I knew you were secretly sentimental, by the way. You pretend to be all tough, but look at all those romantic choices.";
-      break;
-    case 'Sunny':
-      traitComment = "Your choices are basically rays of pure sunshine. I love how warm and optimistic your bouquet feels.";
-      break;
-    case 'Elegant':
-      traitComment = "It feels incredibly tasteful and clean. Minimal effort, maximum class. I respect that.";
-      break;
-    case 'Playful':
-      traitComment = "Honestly, it looks like you just picked flowers like they were sweets. Zero strategy, 100% vibes. Super cute.";
-      break;
-    case 'Calm':
-      traitComment = "It feels so peaceful and soothing. Your bouquet basically looks like it needs a warm chamomile tea, which is very cozy.";
-      break;
-    case 'Bold':
-      traitComment = "Woah, okay. Your choices made a huge statement. No boring options here—you chose things that capture attention.";
-      break;
-    case 'Dreamy':
-      traitComment = "It has a super dreamy, starry aesthetic. It's like a soft pastel scene from a movie we haven't filmed yet.";
-      break;
-    case 'Curious':
-      traitComment = "You picked the rare and unique flowers. It proves that predictable is never really your thing.";
-      break;
-    case 'Minimalist':
-      traitComment = "It's so balanced and simple. You don't need excessive clutter to make something look absolutely beautiful.";
-      break;
-    case 'Free-spirited':
-      traitComment = "It's organic, wild, and natural. Your bouquet has this cool, untamed energy that defies standard borders.";
-      break;
-    case 'Mysterious':
-      traitComment = "You actually searched out the hidden golden bud! You notice the tiny magic details that most people completely miss.";
-      break;
-    default:
-      traitComment = "It is uniquely yours, a complete blend of different styles.";
+    // Wording checks for boys/girls
+    let genderComment = "";
+    if (state.gender === 'boy') {
+      genderComment = "See? You actually made something pretty. I knew you wouldn't mess it up. 😉";
+    } else {
+      genderComment = "Mission accomplished. I think your design tastes are absolutely beautiful.";
+    }
+
+    const finalLetterHTML = `
+      <p>Okay...</p>
+      <p>I think I understand your flower taste now.</p>
+      <p>${traitComment}</p>
+      <p>${genderComment}</p>
+      <p>I made this little garden for you because I wanted to create a small virtual world that was completely yours, rather than just another boring webpage.</p>
+      <p>So keep this bouquet. You selected every single petal yourself, and it fits you perfectly.</p>
+    `;
+
+    letterTextContainer.innerHTML = finalLetterHTML;
+    modalLetterContainer.innerHTML = finalLetterHTML;
+  } catch (e) {
+    console.error("renderPersonalityAndLetter crashed:", e);
   }
-
-  // Wording checks for boys/girls
-  let genderComment = "";
-  if (state.gender === 'boy') {
-    genderComment = "See? You actually made something pretty. I knew you wouldn't mess it up. 😉";
-  } else {
-    genderComment = "Mission accomplished. I think your design tastes are absolutely beautiful.";
-  }
-
-  const finalLetterHTML = `
-    <p>Okay...</p>
-    <p>I think I understand your flower taste now.</p>
-    <p>${traitComment}</p>
-    <p>${genderComment}</p>
-    <p>I made this little garden for you because I wanted to create a small virtual world that was completely yours, rather than just another boring webpage.</p>
-    <p>So keep this bouquet. You selected every single petal yourself, and it fits you perfectly.</p>
-  `;
-
-  letterTextContainer.innerHTML = finalLetterHTML;
-  modalLetterContainer.innerHTML = finalLetterHTML;
 }
 
 // Vector rendering of the bouquet SVG fan
 function renderFinalBouquet() {
-  const container = document.getElementById('final-bouquet-graphics');
-  container.innerHTML = '';
-  
-  let svgHTML = `<svg viewBox="0 0 200 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">`;
-  
-  // 1. Draw Stems merging at center
-  const fannedX = [60, 80, 100, 120, 140, 100];
-  const fannedY = [110, 85, 75, 85, 110, 130];
-  
-  fannedX.forEach((x, idx) => {
-    svgHTML += `<path d="M ${x} ${fannedY[idx] + 25} Q 100 180 100 240 L 100 285" fill="none" stroke="#4C6E43" stroke-width="3" stroke-linecap="round"/>`;
-  });
-  
-  // 2. Render each of the 6 selected flowers
-  state.pickedFlowers.forEach((flowerId, idx) => {
-    const origFlower = document.querySelector(`.flower-${flowerId}`);
-    if (origFlower) {
-      const bloomGroup = origFlower.querySelector('.flower-bloom').outerHTML;
-      const angle = -35 + idx * 14; 
-      const scale = 0.8;
-      const x = fannedX[idx] - 25; 
-      const y = fannedY[idx] - 25;
-      
-      svgHTML += `<g transform="translate(${x}, ${y}) scale(${scale}) rotate(${angle}, 25, 25)">
-        ${bloomGroup}
-      </g>`;
-    }
-  });
-  
-  // 3. Draw leaves and satin ribbon bow
-  svgHTML += `
-    <!-- Leaves -->
-    <path d="M 85 180 Q 50 160 65 135 Q 80 155 90 180 Z" fill="#5F8F54" stroke="#4C6E43" stroke-width="1.5"/>
-    <path d="M 115 180 Q 150 160 135 135 Q 120 155 110 180 Z" fill="#5F8F54" stroke="#4C6E43" stroke-width="1.5"/>
+  try {
+    const container = document.getElementById('final-bouquet-graphics');
+    container.innerHTML = '';
     
-    <!-- Satin Ribbon Bow -->
-    <g stroke="#4A403A" stroke-width="2">
-      <!-- Ribbon bow loops -->
-      <path d="M 100 240 Q 80 215 82 240 Q 84 250 100 240 Z" fill="#F495B4"/>
-      <path d="M 100 240 Q 120 215 118 240 Q 116 250 100 240 Z" fill="#F495B4"/>
-      <!-- Ribbon tails -->
-      <path d="M 98 242 Q 78 270 72 285 Q 83 280 94 242 Z" fill="#F495B4"/>
-      <path d="M 102 242 Q 122 270 128 285 Q 117 280 106 242 Z" fill="#F495B4"/>
-      <!-- Center Knot -->
-      <circle cx="100" cy="240" r="7" fill="#D76B8E"/>
-    </g>
-  `;
-  
-  svgHTML += `</svg>`;
-  container.innerHTML = svgHTML;
+    let svgHTML = `<svg viewBox="0 0 200 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">`;
+    
+    // 1. Draw Stems merging at center
+    const fannedX = [60, 80, 100, 120, 140, 100];
+    const fannedY = [110, 85, 75, 85, 110, 130];
+    
+    fannedX.forEach((x, idx) => {
+      svgHTML += `<path d="M ${x} ${fannedY[idx] + 25} Q 100 180 100 240 L 100 285" fill="none" stroke="#4C6E43" stroke-width="3" stroke-linecap="round"/>`;
+    });
+    
+    // 2. Render each of the 6 selected flowers
+    state.pickedFlowers.forEach((flowerId, idx) => {
+      const origFlower = document.querySelector(`.flower-${flowerId}`);
+      if (origFlower) {
+        const bloomGroup = origFlower.querySelector('.flower-bloom').outerHTML;
+        const angle = -35 + idx * 14; 
+        const scale = 0.8;
+        const x = fannedX[idx] - 25; 
+        const y = fannedY[idx] - 25;
+        
+        svgHTML += `<g transform="translate(${x}, ${y}) scale(${scale}) rotate(${angle}, 25, 25)">
+          ${bloomGroup}
+        </g>`;
+      }
+    });
+    
+    // 3. Draw leaves and satin ribbon bow
+    svgHTML += `
+      <!-- Leaves -->
+      <path d="M 85 180 Q 50 160 65 135 Q 80 155 90 180 Z" fill="#5F8F54" stroke="#4C6E43" stroke-width="1.5"/>
+      <path d="M 115 180 Q 150 160 135 135 Q 120 155 110 180 Z" fill="#5F8F54" stroke="#4C6E43" stroke-width="1.5"/>
+      
+      <!-- Satin Ribbon Bow -->
+      <g stroke="#4A403A" stroke-width="2">
+        <!-- Ribbon bow loops -->
+        <path d="M 100 240 Q 80 215 82 240 Q 84 250 100 240 Z" fill="#F495B4"/>
+        <path d="M 100 240 Q 120 215 118 240 Q 116 250 100 240 Z" fill="#F495B4"/>
+        <!-- Ribbon tails -->
+        <path d="M 98 242 Q 78 270 72 285 Q 83 280 94 242 Z" fill="#F495B4"/>
+        <path d="M 102 242 Q 122 270 128 285 Q 117 280 106 242 Z" fill="#F495B4"/>
+        <!-- Center Knot -->
+        <circle cx="100" cy="240" r="7" fill="#D76B8E"/>
+      </g>
+    `;
+    
+    svgHTML += `</svg>`;
+    container.innerHTML = svgHTML;
+  } catch (e) {
+    console.error("renderFinalBouquet crashed:", e);
+  }
 }
 
 // Places a small version of the final bouquet on the picnic blanket
